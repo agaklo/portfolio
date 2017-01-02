@@ -1,5 +1,7 @@
 package pl.system.db_hib.entities;
 
+
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -13,6 +15,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -25,7 +28,7 @@ public class Invoice {
 		super();
 	}
 	
-	public Invoice(String id, String invoiceNo, String creationDate, String documentDate, Customer seller, Customer buyer) {
+	public Invoice(String id, String invoiceNo, Date creationDate, Date documentDate, Customer seller, Customer buyer) {
 		super();
 		this.id = id;
 		this.invoiceNo = invoiceNo;
@@ -37,8 +40,8 @@ public class Invoice {
 	
 	@Override
 	public String toString() {
-		return "Invoice [id=" + id + ", invoiceNo=" + invoiceNo + ", creationDate=" + creationDate + ", documentDate="
-				+ documentDate + ", seller=" + seller + ", buyer=" + buyer + "]";
+		return "Invoice [id=" + id + ", invoiceNo=" + invoiceNo + ", creationDate=" + creationDate.toString() + ", documentDate="
+				+ documentDate.toString() + ", seller=" + seller + ", buyer=" + buyer + "]";
 	}
 
 	public String getId() {
@@ -57,19 +60,19 @@ public class Invoice {
 		this.invoiceNo = invoiceNo;
 	}
 
-	public String getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(String creationDate) {
+	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
 
-	public String getDocumentDate() {
+	public Date getDocumentDate() {
 		return documentDate;
 	}
 
-	public void setDocumentDate(String documentDate) {
+	public void setDocumentDate(Date documentDate) {
 		this.documentDate = documentDate;
 	}
 
@@ -77,7 +80,7 @@ public class Invoice {
 		return seller;
 	}
 
-	public void setSeller(Customer seler) {
+	public void setSeller(Customer seller) {
 		this.seller = seller;
 	}
 
@@ -96,10 +99,6 @@ public class Invoice {
 	public void setItems(List<InvoiceItem> items) {
 		this.items = items;
 	}
-
-	
-	
-	
 	
 	@Id
 	@GeneratedValue(generator="increment")
@@ -111,10 +110,12 @@ public class Invoice {
 	private String invoiceNo;
 	
 	@Column(name = "creation_date")
-	private String creationDate;
+	@Type(type="date")
+	private Date creationDate;
 	
 	@Column(name = "document_date")
-	private String documentDate;	
+	@Type(type="date")
+	private Date documentDate;	
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="seller_id")
@@ -131,8 +132,8 @@ public class Invoice {
 		JsonObject object = new JsonObject();
 	    object.addProperty("id", id);
 	    object.addProperty("invoice_no", invoiceNo);
-	    object.addProperty("creation_date", creationDate);
-	    object.addProperty("document_date", documentDate);
+	    object.addProperty("creation_date", creationDate.toString());
+	    object.addProperty("document_date", documentDate.toString());
 	    
 	    object.add("seller", seller.toJson() );
 	    object.add("buyer", buyer.toJson() );

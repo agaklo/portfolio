@@ -1,5 +1,8 @@
 package pl.system.db_hib;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -27,7 +30,7 @@ public class App
 		return sessionFactory;
 	}	
 		
-    public static void main( String[] args )
+    public static void main( String[] args ) throws ParseException
     {
         System.out.println( "Hibernate test" );
         
@@ -56,6 +59,10 @@ public class App
         String prettyJson = gson.toJson(jA);
         System.out.println(prettyJson);
         
+        System.out.println( "=================================================" );
+		System.out.println( "==                Additional tests             ==" );
+		System.out.println( "=================================================" );
+		        
         for(Customer c: customers){        	
         	List<Invoice> invoicesBySeller = invoiceDAO.getInvoiceBySeller(session,c);
         	for(Invoice i: invoicesBySeller){
@@ -63,6 +70,21 @@ public class App
         		System.out.println(gson.toJson( i.toJson() ) );
         	}
         }
+        
+        Date from 	= new SimpleDateFormat("yyyy-MM-dd").parse("2016-12-30");
+        Date to 	= new SimpleDateFormat("yyyy-MM-dd").parse("2017-01-01");
+        System.out.println("Searching for invoices by date from:"+from.toString()+", to:" +to.toString() );
+        
+        List<Invoice> invoicesByDate = invoiceDAO.getInvoiceByDocumentDate(session, from, to);
+        if( invoicesByDate.isEmpty() ){
+        	System.out.println("No invoices found for document date from:"+from.toString()+", to:" +to.toString() );
+        }
+        
+        for(Invoice i: invoicesByDate){
+    		System.out.println("Invoices by date from:"+from.toString()+", to:" +to.toString() );
+    		System.out.println(gson.toJson( i.toJson() ) );
+    	}
+                
         session.close();
     	sessionFactory.close();
     	
